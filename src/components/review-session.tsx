@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Button, Badge, ProgressBar } from '@/components/ui';
 import { SM2PlusAlgorithm, ReviewQuality, ItemDifficulty } from '@/lib/advanced-spaced-repetition';
+import { StudyItem } from '@/types';
 import { 
   CheckCircleIcon, 
   XCircleIcon, 
@@ -11,13 +12,6 @@ import {
   BoltIcon,
   HeartIcon
 } from '@heroicons/react/24/outline';
-
-interface StudyItem {
-  id: string;
-  front: string;
-  back: string;
-  difficulty: ItemDifficulty;
-}
 
 interface ReviewSessionProps {
   items: StudyItem[];
@@ -38,6 +32,17 @@ export function ReviewSession({ items, onSessionComplete }: ReviewSessionProps) 
   const [itemStartTime, setItemStartTime] = useState(Date.now());
   const [results, setResults] = useState<ReviewResult[]>([]);
   const [confidence, setConfidence] = useState(3);
+
+  // Convert number difficulty to ItemDifficulty object
+  const convertToItemDifficulty = (item: StudyItem): ItemDifficulty => ({
+    interval: item.interval,
+    easeFactor: item.easeFactor,
+    repetitions: item.consecutiveCorrectAnswers,
+    difficulty: item.difficulty,
+    lastReview: new Date(item.updatedAt),
+    averageQuality: 3, // Default value
+    stabilityFactor: 1, // Default value
+  });
 
   const currentItem = items[currentIndex];
   const progress = ((currentIndex + 1) / items.length) * 100;
@@ -62,7 +67,7 @@ export function ReviewSession({ items, onSessionComplete }: ReviewSessionProps) 
     };
 
     const newDifficulty = SM2PlusAlgorithm.calculateNextReview(
-      currentItem.difficulty,
+      convertToItemDifficulty(currentItem),
       quality
     );
 
@@ -112,7 +117,7 @@ export function ReviewSession({ items, onSessionComplete }: ReviewSessionProps) 
     );
   }
 
-  const difficultyBadge = getDifficultyBadge(currentItem.difficulty);
+  const difficultyBadge = getDifficultyBadge(convertToItemDifficulty(currentItem));
   const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 1000);
 
   return (
@@ -152,16 +157,18 @@ export function ReviewSession({ items, onSessionComplete }: ReviewSessionProps) 
           transition={{ duration: 0.3 }}
         >
           <Card 
-            className="min-h-[400px] flex flex-col justify-center cursor-pointer"
+            className="min-h-[400px] flex flex-col justify-center"
             padding="lg"
             hover={!showAnswer}
-            onClick={!showAnswer ? handleShowAnswer : undefined}
           >
-            <div className="text-center space-y-6">
+            <div 
+              className={`text-center space-y-6 ${!showAnswer ? 'cursor-pointer' : ''}`}
+              onClick={!showAnswer ? handleShowAnswer : undefined}
+            >
               <div className="space-y-4">
                 <h3 className="text-lg text-textSecondary font-medium">Question</h3>
                 <p className="text-2xl font-bold text-text leading-relaxed">
-                  {currentItem.front}
+                  {currentItem.question}
                 </p>
               </div>
 
@@ -176,7 +183,7 @@ export function ReviewSession({ items, onSessionComplete }: ReviewSessionProps) 
                   >
                     <h3 className="text-lg text-textSecondary font-medium">Answer</h3>
                     <p className="text-xl text-text leading-relaxed">
-                      {currentItem.back}
+                      {currentItem.answer}
                     </p>
                   </motion.div>
                 )}
