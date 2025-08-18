@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useTheme } from '../theme-provider';
 
 export interface CardProps {
   children: React.ReactNode;

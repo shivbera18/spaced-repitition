@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Card, Button, Badge, ProgressBar } from '@/components/ui';
+import { Card, Button, Badge } from '@/components/ui';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { SM2PlusAlgorithm, ItemDifficulty } from '@/lib/advanced-spaced-repetition';
 import {
   AcademicCapIcon,
   ChartBarIcon,
@@ -12,7 +11,6 @@ import {
   FireIcon,
   LightBulbIcon,
   TrophyIcon,
-  CalendarDaysIcon,
   ArrowTrendingUpIcon
 } from '@heroicons/react/24/outline';
 
@@ -34,7 +32,7 @@ interface LearningInsight {
 }
 
 export function ModernDashboard() {
-  const [stats, setStats] = useState<DashboardStats>({
+  const [stats] = useState<DashboardStats>({
     totalItems: 124,
     dueToday: 8,
     masteredItems: 47,
@@ -44,7 +42,7 @@ export function ModernDashboard() {
     weeklyProgress: [65, 80, 45, 90, 75, 85, 70]
   });
 
-  const [insights, setInsights] = useState<LearningInsight[]>([
+  const [insights] = useState<LearningInsight[]>([
     {
       type: 'success',
       title: 'Great Progress!',

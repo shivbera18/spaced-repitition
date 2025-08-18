@@ -254,7 +254,7 @@ export class ReviewScheduler {
     });
 
     for (const item of items) {
-      let targetDate = new Date(item.difficulty.lastReview);
+      const targetDate = new Date(item.difficulty.lastReview);
       targetDate.setDate(targetDate.getDate() + item.difficulty.interval);
       
       // Find the earliest date with available capacity
@@ -280,8 +280,20 @@ export class ReviewScheduler {
 /**
  * Legacy compatibility - wrapper for existing StudyItem interface
  */
+interface LegacyStudyItem {
+  id: string;
+  question: string;
+  answer: string;
+  easeFactor: number;
+  interval: number;
+  nextReviewDate: Date;
+  consecutiveCorrectAnswers: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export class SpacedRepetitionEngine {
-  static calculateNextReview(item: any, quality: 0 | 1 | 2 | 3 | 4 | 5): any {
+  static calculateNextReview(item: LegacyStudyItem, quality: 0 | 1 | 2 | 3 | 4 | 5): LegacyStudyItem {
     // Convert legacy format to new format
     const difficulty: ItemDifficulty = {
       easeFactor: item.easeFactor || 2.5,
@@ -314,7 +326,7 @@ export class SpacedRepetitionEngine {
   /**
    * Get items due for review (legacy compatibility)
    */
-  static getItemsDueForReview(items: any[]): any[] {
+  static getItemsDueForReview(items: LegacyStudyItem[]): LegacyStudyItem[] {
     const now = new Date();
     return items.filter(item => {
       if (!item.nextReviewDate) return true;
