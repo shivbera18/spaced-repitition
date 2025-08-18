@@ -107,7 +107,7 @@ export function ReviewSession({ items, onSessionComplete }: ReviewSessionProps) 
     return (
       <Card className="text-center" padding="lg">
         <h2 className="text-2xl font-bold text-text mb-4">No items to review</h2>
-        <p className="text-textSecondary">Great job! You're all caught up.</p>
+                <p className="text-theme-text-muted mb-4">You&apos;ve completed all available items!</p>
       </Card>
     );
   }
